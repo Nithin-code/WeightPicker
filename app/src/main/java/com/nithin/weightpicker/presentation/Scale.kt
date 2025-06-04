@@ -56,6 +56,17 @@ fun Scale(
         val outerRadius = radius.toPx() + scaleWidth.toPx()/2f
         val innerRadius = radius.toPx() - scaleWidth.toPx()/2f
 
+        println(
+            "outer radius: $outerRadius"
+        )
+        println(
+            "inner radius: $innerRadius"
+        )
+
+        println(
+            "circle Center: $circleCenter"
+        )
+
         drawContext.canvas.nativeCanvas.apply {
 
             drawCircle(
@@ -78,22 +89,34 @@ fun Scale(
         }
 
 //        Draw lines
-        for (weight in minWeight..initialWeight){
+        for (weight in minWeight..maxWeight){
 
-            val angle = Math.toRadians((90 + initialWeight - weight).toDouble())
+            val angle = Math.toRadians(180-(90 + initialWeight - weight).toDouble())
+
+            val lineLength = when(weight % 10) {
+                0 -> scaleStyle.tenStepLineLength
+                5 -> scaleStyle.fiveStepLineLength
+                else -> scaleStyle.normalLineLength
+            }
+
+            val lineColor = when(weight % 10) {
+                0 -> scaleStyle.tenStepLineColor
+                5 -> scaleStyle.fiveStepLineColor
+                else -> scaleStyle.normalLineColor
+            }
 
             val startOffset = Offset(
-                x = (center.x - outerRadius * cos(angle)).toFloat(),
+                x = (circleCenter.x - (outerRadius * cos(angle))).toFloat(),
                 y = (circleCenter.y - (outerRadius * sin(angle))).toFloat()
             )
 
             val endOffset = Offset(
-                x = (circleCenter.x - (outerRadius.dp - scaleStyle.tenStepLineLength).toPx() * cos(angle)).toFloat(),
-                y = (circleCenter.y - (outerRadius.dp - scaleStyle.tenStepLineLength).toPx() * sin(angle)).toFloat()
+                x = (circleCenter.x - (outerRadius - lineLength.toPx()) * cos(angle)).toFloat(),
+                y = (circleCenter.y - (outerRadius - lineLength.toPx()) * sin(angle)).toFloat()
             )
 
             drawLine(
-                color = androidx.compose.ui.graphics.Color.Green,
+                color = lineColor,
                 start = startOffset,
                 end = endOffset,
 
